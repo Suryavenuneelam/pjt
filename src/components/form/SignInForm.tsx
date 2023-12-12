@@ -11,7 +11,8 @@ import Link from "next/link";
 import GoogleSignInButton from "../GoogleSignInButton";
 
 const FormSchema = z.object({
-    email: z.string().min(1, 'Email is required').email('Invalid email'),
+    // email: z.string().min(1, 'Email is required').email('Invalid email'),
+    username: z.string().min(1, 'Username is required'),
     password: z
     .string()
     .min(1, 'Password is required')
@@ -27,14 +28,17 @@ const SignInForm = () => {
       const onSubmit = (values: z.infer<typeof FormSchema>) => {
         console.log(values);
       
-        const url = 'http://localhost:8000/api/signin'; // Remove the space before http
+        const url = 'http://localhost:8000/api/login/';
       
         fetch(url, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify(values),
+          body: JSON.stringify({
+            username: values.username, // Change "email" to "username"
+            password: values.password,
+          }),
         })
           .then(response => response.json())
           .then(data => {
@@ -46,6 +50,7 @@ const SignInForm = () => {
             console.error('Error:', error);
           });
       };
+      
 
       
 
@@ -56,14 +61,13 @@ const SignInForm = () => {
             <div className="space-y-2">
             <FormField
               control={form.control}
-              name="email"
+              name="username" // Change the name to "username"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email</FormLabel>
+                  <FormLabel>Username</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter your Email" {...field} />
+                    <Input placeholder="Enter your Username" {...field} />
                   </FormControl>
-                  
                   <FormMessage />
                 </FormItem>
               )}

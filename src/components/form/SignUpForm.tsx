@@ -12,6 +12,7 @@ import GoogleSignInButton from "../GoogleSignInButton";
 
 const FormSchema = z
   .object({
+    name: z.string().min(1, 'Name is required').max(30, 'must not contain more than 30 characters'),
     username: z.string().min(1, 'Username is required').max(30, 'must not contain more than 30 characters'),
     email: z.string().min(1, 'Email is required').email('Invalid email'),
     password: z
@@ -19,36 +20,40 @@ const FormSchema = z
     .min(1, 'Password is required') 
     .min(8, 'Password must have more than 8 characters'),
 
-    Confirmpassword: z.string().min(1, 'Password confirmation is required'),  
-  })
-  .refine((data) => data.password === data.Confirmpassword, {
-    path: ['Confirmpassword'],
-    message: 'Password do not match',
+  //   Confirmpassword: z.string().min(1, 'Password confirmation is required'),  
+  // })
+  // .refine((data) => data.password === data.Confirmpassword, {
+  //   path: ['Confirmpassword'],
+  //   message: 'Password do not match',
 
   })
 
 const SignUpForm = () => {
     const form = useForm<z.infer<typeof FormSchema>>({
         resolver: zodResolver(FormSchema),
-        defaultValues: {
+      defaultValues: {
+          name: '',
           username: '',
           email: '',
           password: '',
-          Confirmpassword: '',
+          // Confirmpassword: '',
         }
 
         
       });
 
-      const onSubmit = (values: z.infer<typeof FormSchema>) => {
+  const onSubmit = (values: z.infer<typeof FormSchema>) => {
+    // Handle the submission of valid form data to your server
         console.log(values);
-      
-        const url = 'http://localhost:8000/api/signup'; // Remove the space before http
-      
+
+
+        const url = 'http://127.0.0.1:8000/api/signup/';
+
         fetch(url, {
-          method: 'POST',
+          method: 'POST', // You can use 'GET' or 'POST' based on your requirements
           headers: {
             'Content-Type': 'application/json',
+            // You might need to include additional headers based on your server requirements
           },
           body: JSON.stringify(values),
         })
@@ -61,8 +66,7 @@ const SignUpForm = () => {
             // Handle errors during the request
             console.error('Error:', error);
           });
-      };
-      
+      }
 
       
 
@@ -70,7 +74,21 @@ const SignUpForm = () => {
     return (
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="w-full">
-            <div className="space-y-2">
+          <div className="space-y-2">
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Name</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Enter your name" {...field} />
+                  </FormControl>
+                  
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <FormField
               control={form.control}
               name="username"
@@ -113,7 +131,9 @@ const SignUpForm = () => {
                 </FormItem>
               )}
             />
-            <FormField
+
+            
+              {/* /* <FormField
               control={form.control}
               name="Confirmpassword"
               render={({ field }) => (
@@ -124,9 +144,9 @@ const SignUpForm = () => {
                   </FormControl>
                   
                   <FormMessage />
-                </FormItem>
+                </FormItem> 
               )}
-            />
+            /> */}
 
             </div>
             <Button className="w-full mt-6" type="submit">
