@@ -44,6 +44,19 @@ const SignInForm = () => {
           .then(data => {
             // Handle the response from the server
             console.log('Response:', data);
+            // Assume you have received the tokens from your authentication process
+            const accessToken = data.accesstoken;
+            const refreshToken = data.refreshtoken;
+            const role = data.role; // Replace with the actual user role
+            const isAuthenticated_localstorage = "true";
+
+            // Store tokens and role in local storage after successful authentication
+            localStorage.setItem('accessToken', accessToken);
+            localStorage.setItem('refreshToken', refreshToken);
+            localStorage.setItem('role', role);
+            localStorage.setItem('isAuthenticated_localstorage', isAuthenticated_localstorage );
+
+
           })
           .catch(error => {
             // Handle errors during the request
